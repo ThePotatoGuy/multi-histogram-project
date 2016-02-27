@@ -30,13 +30,15 @@ typedef struct{
 vector* create_vector_from_file(FILE* file);
 
 /**
+ * delets the given vector
+ */
+void delete_vector(vector* vec);
+
+/**
  * @returns a vector pointer to a vector with the given size
  */
 vector* init_vector(unsigned long size);
 
-/**
- * delets the given vector
- */
-void delete_vector(vector* vec);
+
 
 #endif

@@ -50,6 +50,15 @@ vector* create_vector_from_file(FILE* file){
 	return vec;
 }
 
+void delete_vector(vector* vec){
+	if(vec){
+		if(vec.array){
+			free(vec.array);
+		}
+		free(vec.array);
+	}
+}
+
 vector* init_vector(unsigned long size){
 	vector* vec;
 	
@@ -60,12 +69,4 @@ vector* init_vector(unsigned long size){
 	return vec;
 }
 
-void delete_vector(vector* vec){
-	if(vec){
-		if(vec.array){
-			free(vec.array);
-		}
-		free(vec.array);
-	}
-}
 
