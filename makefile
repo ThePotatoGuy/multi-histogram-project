@@ -6,13 +6,13 @@ CC=gcc
 #   -c :    Only compile (don't link)
 #   -Wall:  Enable all warnings about lazy / dangerous C programming 
 #   -std=c99: Using newer C99 version of C programming language
-CFLAGS=-c -Wall -std=c99 -Wextra -g
+CFLAGS=-c -Wall -std=c99 -Wextra -O1 -g
 
 # All of the .h header files to use as dependencies
-HEADERS=vector.h
+HEADERS=vector.h histogram.h return_code.h
 
 # All of the object files to produce as intermediary work
-OBJECTS=main.o vector.c
+OBJECTS=main.o vector.c histogram.c
 
 # The final program to build
 EXECUTABLE=histo_program.out

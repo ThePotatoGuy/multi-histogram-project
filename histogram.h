@@ -11,7 +11,10 @@
 /*	TYPES	==========================================================*/
 
 typedef struct{
-	unsigned long size;
+	unsigned long bin_count;
+	double min;
+	double max;
+	double bin_width;
 	double* bin_maxes;
 	unsigned long* bin_counts;
 	vector* data;
@@ -29,5 +32,14 @@ void delete_histogram(histogram* gram);
  * does NOT initalize the data portion of the histrogram struct
  */
 histogram* init_histogram(unsigned long size);
+
+/**
+ * Proceess the min, max, bin_width, and bin_maxes of the given graph
+ * 
+ * USES RETURN_CODE
+ * @return SUCCESS if the vector of data has been processed successfully
+ * 	ERROR if the vector of data has not been set yet
+ */
+int process_data(histogram* graph);
 
 #endif

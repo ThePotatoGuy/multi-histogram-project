@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include "histogram.h"
+#include "return_code.h"
 
 /*	FUNCTIONS	======================================================*/
 
@@ -32,6 +33,10 @@ histogram* init_histogram(unsigned long size){
 	graph = malloc(sizeof(histogram));
 	graph->bin_maxes = malloc(size*sizeof(double));
 	graph->bin_counts = malloc(size*sizeof(unsigned long));
+	graph->bin_count = size;
+	graph->min = 0;
+	graph->max = 0;
+	graph->bin_width = 0;
 	
 	return graph;
 }
