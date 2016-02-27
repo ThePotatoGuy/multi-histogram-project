@@ -10,6 +10,14 @@
 /*	PRIVATE FUNCTION PROTOTYPES	======================================*/
 
 /**
+ * binary searches for the correct bin for the given data
+ * the data MUST belong to a bin.
+ * 
+ * @returns the bin data belongs to
+ */
+static unsigned long binary_find_bin(double data, double* bin_maxes, unsigned long start, unsigned long end);
+
+/**
  * Calculatse and sets the bin_maxes of the given graph
  * Assumes bin_width is already set
  */
@@ -34,6 +42,20 @@ static int find_min_max(histogram* graph);
 
 /*	FUNCTIONS	======================================================*/
 
+static unsigned long binary_find_bin(double data, double* bin_maxes, unsigned long start, unsigned long end){
+	if(end-start > 0){
+		unsigned long pivot = (start+end)/2;
+		if(bin_maxes[pivot-1] <= data && data < bin_maxes[pivot]){
+			return pivot;
+		}else if(data < bin_maxes[pivot-1]){
+			return binary_find_bin(data, bin_maxes, start, pivot);
+		}else if(data > bin_maxes[pivot]){
+			return binary_find_bin(data, bin_maxes, pivot, end);
+		}
+	}
+	return start;
+}
+
 static void calculate_bin_maxes(histogram* graph){
 	unsigned long t;
 	
@@ -53,13 +75,22 @@ unsigned long find_bin(double data, histogram* graph){
 		return graph->bin_count;
 	}
 	
+	/* Check if the value is in the first bin */
+	if(graph->min <= data && data < graph->bin_maxes[0]){
+		return 0;
+	}
+	
+	return binary_find_bin(data, graph->bin_maxes, 1, graph->bin_count);
+	
+	/* Linear Search */
+	/*
 	for(t=0; t < graph->bin_count; t++){
 		if(data < graph->bin_maxes[t]){
 			return t;
 		}
 	}
 	
-	return graph->bin_count;
+	return graph->bin_count;*/
 }
 
 void delete_histogram(histogram* gram){
