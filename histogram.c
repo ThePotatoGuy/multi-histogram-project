@@ -66,6 +66,7 @@ void delete_histogram(histogram* gram){
 
 histogram* init_histogram(unsigned long size){
 	histogram* graph;
+	unsigned long t;
 	
 	graph = malloc(sizeof(histogram));
 	graph->bin_maxes = malloc(size*sizeof(double));
@@ -74,6 +75,11 @@ histogram* init_histogram(unsigned long size){
 	graph->min = 0;
 	graph->max = 0;
 	graph->bin_width = 0;
+	
+	for(t=0; t < size; t++){
+		graph->bin_maxes = 0;
+		graph->bin_counts = 0;
+	}
 	
 	return graph;
 }
