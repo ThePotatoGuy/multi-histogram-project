@@ -41,7 +41,7 @@ vector* create_vector_from_file(FILE* file){
 			return NULL;
 		}else{
 			if(index < size){
-				vec.array[index++] = num;
+				vec->array[index++] = num;
 			}else{
 				no_overflow = false;
 			}
@@ -52,10 +52,10 @@ vector* create_vector_from_file(FILE* file){
 
 void delete_vector(vector* vec){
 	if(vec){
-		if(vec.array){
-			free(vec.array);
+		if(vec->array){
+			free(vec->array);
 		}
-		free(vec.array);
+		free(vec->array);
 	}
 }
 
@@ -63,8 +63,8 @@ vector* init_vector(unsigned long size){
 	vector* vec;
 	
 	vec = malloc(sizeof(vec));
-	vec.array = malloc(size*sizeof(double));
-	vec.size = size;
+	vec->array = malloc(size*sizeof(double));
+	vec->size = size;
 	
 	return vec;
 }

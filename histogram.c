@@ -4,6 +4,7 @@
  */
 
 #include <stdlib.h>
+#include "vector.h"
 #include "histogram.h"
 #include "return_code.h"
 
@@ -104,7 +105,7 @@ void delete_histogram(histogram* gram){
 		}
 		
 		if(gram->data){
-			delete_vector(data);
+			delete_vector(gram->data);
 		}
 		
 		free(gram);
@@ -158,15 +159,15 @@ static int find_min_max(histogram* graph){
 		return FAIL;
 	}
 	
-	min = graph->data[0];
-	max = graph->data[0];
+	min = graph->data->array[0];
+	max = graph->data->array[0];
 	
 	for(t=1; t < graph->data->size; t++){
-		if(graph->data[t] < min){
-			min = graph->data[t];
+		if(graph->data->array[t] < min){
+			min = graph->data->array[t];
 		}
-		if(graph->data[t] > max){
-			max = graph->data[t];
+		if(graph->data->array[t] > max){
+			max = graph->data->array[t];
 		}
 	}
 	
