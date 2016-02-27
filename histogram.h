@@ -38,8 +38,9 @@ histogram* init_histogram(unsigned long size);
  * 
  * USES RETURN_CODE
  * @return SUCCESS if the vector of data has been processed successfully
+ * 	FAIL if the data vector is size 0
  * 	ERROR if the vector of data has not been set yet
  */
-int process_data(histogram* graph);
+int process_stats(histogram* graph);
 
 #endif
