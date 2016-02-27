@@ -28,6 +28,14 @@ typedef struct{
 void delete_histogram(histogram* gram);
 
 /**
+ * finds the bin index where the given data belongs
+ * 
+ * @returns the index of the bin data belongs to
+ * 	OR the bin_count if the data does not belong to any bin.
+ */
+unsigned long find_bin(double data, histogram* graph);
+
+/**
  * Create a histogram struct with the given size
  * does NOT initalize the data portion of the histrogram struct
  */

@@ -46,6 +46,22 @@ static void calculate_bin_width(histogram* graph){
 	graph->bin_width = (graph->max - graph->min)/graph->bin_count;
 }
 
+unsigned long find_bin(double data, histogram* graph){
+	unsigned long t;
+	
+	if(data < graph->min || data > graph->max){
+		return graph->bin_count;
+	}
+	
+	for(t=0; t < graph->bin_count; t++){
+		if(data < graph->bin_maxes[t]){
+			return t;
+		}
+	}
+	
+	return graph->bin_count;
+}
+
 void delete_histogram(histogram* gram){
 	if(gram){
 		if(gram->bin_maxes){
