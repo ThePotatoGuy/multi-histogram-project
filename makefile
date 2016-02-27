@@ -15,7 +15,7 @@ HEADERS=vector.h
 OBJECTS=main.o vector.c
 
 # The final program to build
-EXECUTABLE=histo_program
+EXECUTABLE=histo_program.out
 
 # --------------------------------------------
 
