@@ -10,6 +10,7 @@
 #include <pthread.h> /* for parallel output */
 #include "vector.h"
 #include "histogram.h"
+#include "parallel_helpers.h"
 #include "config.h"
 #include "return_code.h"
 
@@ -50,6 +51,11 @@ static void calculate_bin_width(histogram* graph);
  */
 static int find_min_max(histogram* graph);
 
+/**
+ * Transfers the bin counts from p_graph to the graph
+ */
+static void transfer_bin_counts(histogram* graph, p_histogram* p_graph);
+
 /*	FUNCTIONS	======================================================*/
 
 static unsigned long binary_find_bin(double data, double* bin_maxes, unsigned long start, unsigned long end){
@@ -66,6 +72,94 @@ static unsigned long binary_find_bin(double data, double* bin_maxes, unsigned lo
 	}
 	printf("test\n");
 	return start;
+}
+
+void* bin_data(void* data){
+	p_histogram* p_graph;
+	p_histogram** p_graphs;
+	pthread_t* threads;
+	void* status;
+	unsigned long divisor,t,index;
+	int rc, spawn_size, i;
+	
+	p_graph = (p_histogram*) data;
+	
+	if(p_graph->is_edge){
+		divisor = find_larger_power_of_two(p_graph->thread_count - p_graph->thread_id);
+	}else{
+		divisor = p_graph->divisor;
+	}
+	
+	spawn_size = calculate_thread_spawn_size(divisor, p_graph->thread_id, p_graph->thread_count);
+	
+	printf(THREAD_SP_MSG,p_graph->thread_id, spawn_size);
+	
+	if(spawn_size > 0){
+		p_graphs = malloc(spawn_size*sizeof(p_histogram*));
+		threads = malloc(spawn_size*sizeof(pthread_t));
+		index = 0;
+	
+		while(divisor > 0 && index < spawn_size){
+			t = p_graph->thread_id + (divisor/2);
+			
+			printf(THREAD_CR_MSG, p_graph->thread_id, t);
+			
+			p_graphs[index] = init_p_histogram(p_graph->graph, t, p_graph->thread_count);
+			p_graphs[index]->divisor = divisor/2;
+			
+			if(p_graph->is_edge && index == 0){
+				p_graphs[index]->is_edge = true;
+			}else{
+				p_graphs[index]->is_edge = false;
+			}
+			
+			rc = pthread_create(&threads[index],&join,bin_data,(void*)p_graphs[index]);
+			
+			if(rc){
+				printf(ERROR_THREAD_CR, rc);
+				delete_p_histogram_list(p_graphs,index+1);
+				free(threads);
+				exit(ERROR);
+			}
+			
+			/*printf("TEST %ld, %ld, %ld\n", index, divisor, t);*/
+			
+			index += 1;
+			divisor /= 2;
+		}
+	}
+	
+	bin_data_values(p_graph);
+	
+	for(i = spawn_size-1; i>= 0; i--){
+		rc = pthread_join(threads[i], &status);
+    	if(rc){
+        	printf(ERROR_THREAD_JN, rc);
+        	delete_p_histogram_list(p_graphs,index);
+        	free(threads);
+        	exit(ERROR);
+    	}
+    	sum_bin_counts(p_graph,p_graphs[i]);
+	}
+	
+	if(spawn_size > 0){
+		delete_p_histogram_list(p_graphs, index);
+		free(threads);
+	}
+	pthread_exit(NULL);
+}
+
+void bin_data_values(p_histogram* p_graph){
+	unsigned long start_index, end_index, t, bin;
+	
+	start_index = calculate_start_index(p_graph->thread_id, p_graph->thread_count, p_graph->graph->data->size);
+	end_index = calculate_end_index(p_graph->thread_id, p_graph->thread_count, p_graph->graph->data->size);
+	
+	for(t=start_index; t < end_index; t++){
+		bin = find_bin(p_graph->graph->data->array[t],p_graph->graph);
+		
+		p_graph->loc_bin_counts[bin] += 1;
+	}
 }
 
 static void calculate_bin_maxes(histogram* graph){
@@ -102,15 +196,29 @@ void delete_histogram(histogram* gram){
 
 void delete_p_histogram(p_histogram* p_graph){
 	if(p_graph){
+		/*
 		if(p_graph->graph){
 			delete_histogram(p_graph->graph);
-		}
+		}*/
 		
 		if(p_graph->loc_bin_counts){
 			free(p_graph->loc_bin_counts);
 		}
 		
 		free(p_graph);
+	}
+}
+
+void delete_p_histogram_list(p_histogram** p_graphs, int size){
+	int t;
+	
+	if(p_graphs){
+		for(t=0; t < size; t++){
+			if(p_graphs[t]){
+				delete_p_histogram(p_graphs[t]);
+			}
+		}
+		free(p_graphs);
 	}
 }
 
@@ -230,21 +338,53 @@ void print_bins(histogram* graph){
 int process_data_parallel(histogram* graph, unsigned long thread_count){
 	pthread_t* threads;
 	p_histogram** p_data;
-	int rc;
-	int t;
+	int rc,t,second_thread_base;
+	void* status;
 	
 	threads = malloc(BASE_THD*sizeof(pthread_t));
 	p_data = malloc(BASE_THD*sizeof(p_histogram*));
+	second_thread_base = find_smaller_power_of_two(thread_count-1);
 	
 	pthread_attr_init(&join);
-   	pthread_attr_setdetachstate(&join, PTHREAD_CREATE_JOINABLE);
-	
+   	pthread_attr_setdetachstate(&join, PTHREAD_CREATE_JOINABLE);	
 	
 	for(t=0; t < BASE_THD; t++){
-		p_data[t] = init_p_histogram(graph, 
+		p_data[t] = init_p_histogram(graph,t,thread_count);
+		p_data[t]->divisor = second_thread_base;
 	}
 	
+	p_data[1]->thread_id = second_thread_base;
+	p_data[1]->is_edge = true;
 	
+	for(t=0; t < BASE_THD; t++){
+		rc = pthread_create(&threads[t], &join, bin_data, (void*)p_data[t]);
+		if(rc){
+			printf(ERROR_THREAD_CR, rc);
+			delete_p_histogram_list(p_data,BASE_THD);
+			free(threads);
+			exit(ERROR);
+		}
+	}
+	
+	for(t=0; t < BASE_THD; t++){
+		rc = pthread_join(threads[t], &status);
+    	if(rc){
+        	printf(ERROR_THREAD_JN, rc);
+        	delete_p_histogram_list(p_data,BASE_THD);
+        	free(threads);
+        	exit(ERROR);
+    	}
+	}
+	
+	sum_bin_counts(p_data[0],p_data[1]);
+	transfer_bin_counts(graph,p_data[0]);
+	
+	/* Delete what we dont need anymore */
+	pthread_attr_destroy(&join);
+	delete_p_histogram_list(p_data,BASE_THD);
+	free(threads);
+	
+	return SUCCESS;
 }
 
 void process_data_serial(histogram* graph){
@@ -278,4 +418,20 @@ int process_stats(histogram* graph){
 	calculate_bin_maxes(graph);
 	
 	return SUCCESS;
+}
+
+void sum_bin_counts(p_histogram* p_graph_receive, p_histogram* p_graph_send){
+	unsigned long t;
+	
+	for(t=0; t < p_graph_receive->graph->bin_count; t++){
+		p_graph_receive->loc_bin_counts[t] += p_graph_send->loc_bin_counts[t];
+	}
+}
+
+static void transfer_bin_counts(histogram* graph, p_histogram* p_graph){
+	unsigned long t;
+	
+	for(t=0; t < graph->bin_count; t++){
+		graph->bin_counts[t] = p_graph->loc_bin_counts[t];
+	}
 }

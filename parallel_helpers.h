@@ -13,12 +13,12 @@
 /**
  *	@returns the index the given thread will stop at
  */
-int calculate_end_index(int thread_id, int thread_count, unsigned long size);
+unsigned long calculate_end_index(unsigned long thread_id, unsigned long thread_count, unsigned long size);
 
 /**
  * @returns the index the given thread will start at
  */
-int calculate_start_index(int thread_id, int thread_count, unsigned long size);
+unsigned long calculate_start_index(unsigned long thread_id, unsigned long thread_count, unsigned long size);
 
 /**
  * Calculates how many threads the given thread needs to spawn for 
@@ -26,7 +26,7 @@ int calculate_start_index(int thread_id, int thread_count, unsigned long size);
  * 
  * @returns the number of threads the given thread needs to spawn
  */
-int calculate_thread_spawn_size(int divisor, int thread_id, int thread_count);
+int calculate_thread_spawn_size(unsigned long divisor, unsigned long thread_id, unsigned long thread_count);
 
 /**
  * @returns the nearest power of two to the given value

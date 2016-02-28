@@ -10,22 +10,22 @@
 
 /*	FUNCTIONS	======================================================*/
 
-int calculate_end_index(int thread_id, int thread_count, unsigned long size){
+unsigned long calculate_end_index(unsigned long thread_id, unsigned long thread_count, unsigned long size){
 	return (( (thread_id+1)*size) / thread_count) -1 ;
 }
 
-int calculate_start_index(int thread_id, int thread_count, unsigned long size){
+unsigned long calculate_start_index(unsigned long thread_id, unsigned long thread_count, unsigned long size){
 	return (thread_id * size)  / thread_count ;
 }
 
-int calculate_thread_spawn_size(int divisor, int thread_id, int thread_count){
+int calculate_thread_spawn_size(unsigned long divisor, unsigned long thread_id, unsigned long  thread_count){
 	int log_bse;
 	
 	if(thread_id >= thread_count){
 		return 0;
 	}
 	else{
-		log_bse = find_smallest_expo_of_two(value);
+		log_bse = find_smallest_expo_of_two(divisor);
 		if(thread_count - log_bse <= thread_id){
 			log_bse = thread_count - thread_id-1;
 		}

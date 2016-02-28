@@ -39,14 +39,31 @@ typedef struct{
 /*	FUNCTIONS	======================================================*/
 
 /**
+ * Parallelized data binning
+ */
+void* bin_data(void* data);
+
+/**
+ * Bins a set number of data depending on thread_id
+ * for paralliation
+ */
+void bin_data_values(p_histogram* p_graph);
+
+/**
  * Deletes the given histogram
  */
 void delete_histogram(histogram* gram);
 
 /**
  * Deletes the given p_histogram
+ * DOES NOT DELETE the embedded histogram
  */
 void delete_p_histogram(p_histogram* p_graph);
+
+/**
+ * Deletes the given list of p_histogranms
+ */
+void delete_p_histogram_list(p_histogram** p_graphs, int size);
 
 /**
  * finds the bin index where the given data belongs
@@ -78,11 +95,9 @@ void print_bins(histogram* graph);
  * counts the data in graph according to bin in parallel
  * Assumes bin_maxes and min and max stuff has already been done
  * 
- * USES RETURN CODE
- * @returns SUCCESS if successful
- * 	ERROR if anything screwedup
+ * @returns return codes from p_thread (messages will have already been printed out)
  */
-int process_data_parallel(histogram* graph);
+int process_data_parallel(histogram* graph, unsigned long thread_count);
 
 /**
  * counts the data in graph according to bin seriall.
@@ -99,5 +114,11 @@ void process_data_serial(histogram* graph);
  * 	ERROR if the vector of data has not been set yet
  */
 int process_stats(histogram* graph);
+
+/**
+ * Sums the loc_bin_cts between the given p_histograms and
+ * sets the sums to p_graph_receive
+ */
+void sum_bin_counts(p_histogram* p_graph_receive, p_histogram* p_graph_send);
 
 #endif
