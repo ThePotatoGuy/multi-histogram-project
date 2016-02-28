@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include "vector.h"
 
-#define INPUT_BUFFER_SIZE 10
+#define INPUT_BUFFER_SIZE 100
 
 /*	FUNCTIONS	======================================================*/
 
@@ -34,7 +34,7 @@ vector* create_vector_from_file(FILE* file){
 	no_overflow = true;
 	
 	while( fgets(buffer,INPUT_BUFFER_SIZE,file) != NULL && no_overflow){
-		rc = sscanf(buffer,"%f",&num);
+		rc = sscanf(buffer,"%lf",&num);
 		
 		if(rc < 1){
 			delete_vector(vec);

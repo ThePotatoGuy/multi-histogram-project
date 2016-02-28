@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "vector.h"
 #include "histogram.h"
+#include "config.h"
 #include "return_code.h"
 
 /*	PRIVATE FUNCTION PROTOTYPES	======================================*/
@@ -155,11 +156,21 @@ histogram* init_histogram(unsigned long size){
 	graph->bin_width = 0;
 	
 	for(t=0; t < size; t++){
-		graph->bin_maxes = 0;
-		graph->bin_counts = 0;
+		graph->bin_maxes[t] = 0;
+		graph->bin_counts[t] = 0;
 	}
 	
 	return graph;
+}
+
+void print_bins(histogram* graph){
+	unsigned long t;
+	
+	printf(BINS_MESSAGE,BINS_MESSAGE_2);
+	
+	for(t=0; t < graph->bin_count; t++){
+		printf("%9lu | %9lu\n",t,graph->bin_counts[t]);
+	}
 }
 
 void process_data_serial(histogram* graph){
