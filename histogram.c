@@ -75,7 +75,6 @@ static unsigned long binary_find_bin(double data, double* bin_maxes, unsigned lo
 			return binary_find_bin(data, bin_maxes, pivot, end);
 		}
 	}
-	printf("test\n");
 	return start;
 }
 
@@ -97,7 +96,7 @@ void* bin_data(void* data){
 	
 	spawn_size = calculate_thread_spawn_size(divisor, p_graph->thread_id, p_graph->thread_count);
 	
-	printf(THREAD_SP_MSG,p_graph->thread_id, spawn_size);
+	/*printf(THREAD_SP_MSG,p_graph->thread_id, spawn_size);*/
 	
 	if(spawn_size > 0){
 		p_graphs = malloc(spawn_size*sizeof(p_histogram*));
@@ -107,7 +106,7 @@ void* bin_data(void* data){
 		while(divisor > 0 && index < spawn_size){
 			t = p_graph->thread_id + (divisor/2);
 			
-			printf(THREAD_CR_MSG, p_graph->thread_id, t);
+			/*printf(THREAD_CR_MSG, p_graph->thread_id, t);*/
 			
 			p_graphs[index] = init_p_histogram(p_graph->graph, t, p_graph->thread_count);
 			p_graphs[index]->divisor = divisor/2;
@@ -360,6 +359,8 @@ int process_data_parallel(histogram* graph, unsigned long thread_count){
 	int rc,t,second_thread_base;
 	void* status;
 	
+	printf(H_BD_MSG,METH_PAR);
+	
 	threads = malloc(BASE_THD*sizeof(pthread_t));
 	p_data = malloc(BASE_THD*sizeof(p_histogram*));
 	second_thread_base = find_smaller_power_of_two(thread_count-1);
@@ -409,7 +410,7 @@ int process_data_parallel(histogram* graph, unsigned long thread_count){
 void process_data_serial(histogram* graph){
 	unsigned long t, bin;
 	
-	printf(H_BD_MSG);
+	printf(H_BD_MSG,METH_SER);
 	
 	for(t=0; t < graph->data->size; t++){
 		bin = find_bin(graph->data->array[t], graph);
