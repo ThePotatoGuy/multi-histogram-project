@@ -10,6 +10,8 @@
 
 #define READ_ONLY "r"
 
+#define BASE_THD 2
+
 #define RAND_FLAG "-R"
 #define HELP_FLAG "-h"
 

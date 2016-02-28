@@ -6,13 +6,16 @@ CC=gcc
 #   -c :    Only compile (don't link)
 #   -Wall:  Enable all warnings about lazy / dangerous C programming 
 #   -std=c99: Using newer C99 version of C programming language
-CFLAGS=-c -Wall -std=c99 -Wextra -O1 -g
+CFLAGS=-c -Wall -std=c99 -Wextra -O1 -g -pthread
+
+# linker flags
+CLINKFLAGS =-lpthread -lm
 
 # All of the .h header files to use as dependencies
-HEADERS=vector.h histogram.h return_code.h config.h
+HEADERS=vector.h histogram.h parallel_helpers.h return_code.h config.h
 
 # All of the object files to produce as intermediary work
-OBJECTS=main.o vector.c histogram.c
+OBJECTS=main.o vector.c histogram.c parallel_helpers.c
 
 # The final program to build
 EXECUTABLE=histo_program.out
@@ -22,7 +25,7 @@ EXECUTABLE=histo_program.out
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXECUTABLE)
+	$(CC) $(CLINKFLAGS) $(OBJECTS) -o $(EXECUTABLE)
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -o $@ $<

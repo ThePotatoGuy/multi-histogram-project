@@ -13,6 +13,10 @@
 #include "config.h"
 #include "return_code.h"
 
+/*	PRIVATE VARIABLE	==============================================*/
+
+static pthread_attr_t join;
+
 /*	PRIVATE FUNCTION PROTOTYPES	======================================*/
 
 /**
@@ -194,7 +198,7 @@ histogram* init_histogram(unsigned long size){
 	return graph;
 }
 
-p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id){
+p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id, unsigned long thread_count){
 	p_histogram* p_graph;
 	unsigned long t;
 	
@@ -202,6 +206,7 @@ p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id){
 	p_graph->loc_bin_counts = malloc(graph->bin_count*sizeof(unsigned long));
 	p_graph->graph = graph;
 	p_graph->thread_id = thread_id;
+	p_graph->thread_count = thread_count;
 	p_graph->divisor = 0;
 	p_graph->is_edge = false;
 	
@@ -222,7 +227,23 @@ void print_bins(histogram* graph){
 	}
 }
 
-int process_data_parallel(histogram* graph){
+int process_data_parallel(histogram* graph, unsigned long thread_count){
+	pthread_t* threads;
+	p_histogram** p_data;
+	int rc;
+	int t;
+	
+	threads = malloc(BASE_THD*sizeof(pthread_t));
+	p_data = malloc(BASE_THD*sizeof(p_histogram*));
+	
+	pthread_attr_init(&join);
+   	pthread_attr_setdetachstate(&join, PTHREAD_CREATE_JOINABLE);
+	
+	
+	for(t=0; t < BASE_THD; t++){
+		p_data[t] = init_p_histogram(graph, 
+	}
+	
 	
 }
 

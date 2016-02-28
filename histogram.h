@@ -31,6 +31,7 @@ typedef struct{
 	histogram* graph;
 	unsigned long* loc_bin_counts;
 	unsigned long thread_id;
+	unsigned long thread_count;
 	unsigned long divisor;
 	bool is_edge;
 }p_histogram;
@@ -62,10 +63,10 @@ unsigned long find_bin(double data, histogram* graph);
 histogram* init_histogram(unsigned long size);
 
 /**
- * Creates a p_histogram struct with the given histogram and thread_id
+ * Creates a p_histogram struct with the given histogram and thread_id and thread_count
  * Assumes histogram data has already been initalized
  */
-p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id);
+p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id, unsigned long thread_count);
 
 /**
  * Prints the bin_counts
