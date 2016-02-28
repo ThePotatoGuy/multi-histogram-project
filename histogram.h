@@ -14,8 +14,8 @@
 
 typedef struct{
 	unsigned long bin_count;
-	double min;
-	double max;
+	unsigned long min;
+	unsigned long max;
 	double bin_width;
 	double* bin_maxes;
 	unsigned long* bin_counts;

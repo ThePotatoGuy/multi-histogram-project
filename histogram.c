@@ -138,8 +138,8 @@ static int find_min_max(histogram* graph){
 		}
 	}
 	
-	graph->min = min;
-	graph->max = max;
+	graph->min = (unsigned long)min;
+	graph->max = (unsigned long)(max+1);
 	return SUCCESS;
 }
 
