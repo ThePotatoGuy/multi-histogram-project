@@ -30,6 +30,7 @@
 #define BINS_MSG_BIN "Bin number"
 #define BINS_MSG_COT "Count"
 #define BINS_MSG_MAX "Upper bound"
+#define BINS_DATA_MSG "%9lu |%9lu |%9lf\n"
 
 #define BAD_ARGS_MESSAGE "Missing number arguments to %s\n"
 #define BAD_ARG_MESSAGE "Missing number argument N to %s\n"

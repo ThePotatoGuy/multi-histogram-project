@@ -52,6 +52,11 @@ static void calculate_bin_width(histogram* graph);
 static int find_min_max(histogram* graph);
 
 /**
+ * Debug method lets us see the bin_cts of a p_graph
+ */
+static void print_bin_cts(p_histogram* p_graph);
+
+/**
  * Transfers the bin counts from p_graph to the graph
  */
 static void transfer_bin_counts(histogram* graph, p_histogram* p_graph);
@@ -155,7 +160,9 @@ void bin_data_values(p_histogram* p_graph){
 	start_index = calculate_start_index(p_graph->thread_id, p_graph->thread_count, p_graph->graph->data->size);
 	end_index = calculate_end_index(p_graph->thread_id, p_graph->thread_count, p_graph->graph->data->size);
 	
-	for(t=start_index; t < end_index; t++){
+	/*printf("Thread %lu = %lu:%lu\n",p_graph->thread_id,start_index,end_index);*/
+	
+	for(t=start_index; t <= end_index; t++){
 		bin = find_bin(p_graph->graph->data->array[t],p_graph->graph);
 		
 		p_graph->loc_bin_counts[bin] += 1;
@@ -325,13 +332,25 @@ p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id, unsigne
 	return p_graph;
 }
 
+static void print_bin_cts(p_histogram* p_graph){
+	unsigned long t;
+	
+	printf("Thread %lu: ",p_graph->thread_id);
+	
+	for(t=0; t < p_graph->graph->bin_count; t++){
+		printf("%lu, ",p_graph->loc_bin_counts[t]);
+	}
+	
+	printf("\n");
+}
+
 void print_bins(histogram* graph){
 	unsigned long t;
 	
 	printf(BINS_MESSAGE,BINS_MSG_BIN,BINS_MSG_COT,BINS_MSG_MAX);
 	
 	for(t=0; t < graph->bin_count; t++){
-		printf("%9lu | %9lu | %9lf\n",t,graph->bin_counts[t],graph->bin_maxes[t]);
+		printf(BINS_DATA_MSG,t,graph->bin_counts[t],graph->bin_maxes[t]);
 	}
 }
 
@@ -422,6 +441,9 @@ int process_stats(histogram* graph){
 
 void sum_bin_counts(p_histogram* p_graph_receive, p_histogram* p_graph_send){
 	unsigned long t;
+	
+	/*print_bin_cts(p_graph_receive);
+	print_bin_cts(p_graph_send);*/
 	
 	for(t=0; t < p_graph_receive->graph->bin_count; t++){
 		p_graph_receive->loc_bin_counts[t] += p_graph_send->loc_bin_counts[t];

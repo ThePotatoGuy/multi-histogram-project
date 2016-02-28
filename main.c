@@ -82,7 +82,11 @@ int main(int argc, char* argv[]){
 		return ERROR;
 	}
 	
+	/*
 	process_data_serial(graph);
+	*/
+	
+	process_data_parallel(graph,8);
 	print_bins(graph);
 	
 	//delete_histogram(graph);
