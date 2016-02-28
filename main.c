@@ -2,9 +2,17 @@
  * @author Andre Allan Ponce
  * andreponce@null.net
  * 
- * Histogram program
+ * Histogram program that bins data according to min/max of a bin's bounds
+ * (Refer to actual histograms to understand how histograms work)
  * 
  * This program can bin given double/float data in parallel (and serial)
+ * 
+ * When loading from file, please use the following format for the file:
+ * <number of lines of data>
+ * <data 1>
+ * <data 2>
+ * ...
+ * <data n>
  * 
  * USAGE:
  * 	histo_program.out [-h] [-p N] (-R N B or FILENAME B)
