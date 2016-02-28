@@ -6,13 +6,14 @@ Histogram program that bins data according to min/max of a bin's bounds
 This program can bin given double/float data in parallel (and serial)
  
 When loading from file, please use the following format for the file:
-* <number of lines of data>
-* <data 1>
-* <data 2>
+* \<number of lines of data\>
+* \<data 1\>
+* \<data 2\>
 * ...
-* <data n>
+* \<data n\>
 
 # USAGE:
+```
 histo_program.out [-h] [-p N] (-R N B or FILENAME B)
 
 Required arguments:
@@ -26,3 +27,4 @@ Optional arguments:
 -h			Display help message and exit
 -p N		Use parallel binning process with N number of threads
 			(Default mode is serial)
+```
