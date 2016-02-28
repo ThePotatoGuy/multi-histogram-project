@@ -179,7 +179,7 @@ void process_data_serial(histogram* graph){
 	for(t=0; t < graph->data->size; t++){
 		bin = find_bin(graph->data->array[t], graph);
 		
-		printf("%lu\n", bin);
+		/*printf("%lu\n", bin);*/
 		
 		if(bin == graph->bin_count){
 			printf("Bad data at index %u\n", bin);

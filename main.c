@@ -45,9 +45,8 @@ int main(int argc, char* argv[]){
 				return ERROR;
 			}
 			
-			/* TODO */
-			printf("TODO\n");
-			return SUCCESS;
+			graph = init_histogram(bins_size);
+			graph->data = create_vector_random(size);
 		}
 	}else{
 		if(argc < 3){
@@ -70,8 +69,6 @@ int main(int argc, char* argv[]){
 		}
 		
 		graph = init_histogram(bins_size);
-		
-		
 		graph->data = create_vector_from_file(file);
 	}
 	

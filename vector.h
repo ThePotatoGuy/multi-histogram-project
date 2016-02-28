@@ -39,6 +39,11 @@ typedef struct{
 vector* create_vector_from_file(FILE* file);
 
 /**
+ * Creates a vector with random doubles of the given size
+ */
+vector* create_vector_random(unsigned long size);
+
+/**
  * delets the given vector
  */
 void delete_vector(vector* vec);

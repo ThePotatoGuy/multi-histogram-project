@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <time.h>
 #include "vector.h"
 
 #define INPUT_BUFFER_SIZE 100
@@ -47,6 +48,21 @@ vector* create_vector_from_file(FILE* file){
 			}
 		}
 	}
+	return vec;
+}
+
+vector* create_vector_random(unsigned long size){
+	vector* vec;
+	unsigned long t;
+	
+	vec = init_vector(size);
+	
+	srand(time(NULL));
+	
+	for(t=0; t < size; t++){
+		vec->array[t] = ((double)rand()/(double)RAND_MAX) *10;
+	}
+	
 	return vec;
 }
 
