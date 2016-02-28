@@ -8,19 +8,32 @@
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
 
+#include <stdbool.h>
 #include "vector.h"
 
 /*	TYPES	==========================================================*/
 
+/* Basic histogram */
 typedef struct{
 	unsigned long bin_count;
-	unsigned long min;
-	unsigned long max;
+	/*unsigned long min;
+	unsigned long max;*/
+	double min;
+	double max;
 	double bin_width;
 	double* bin_maxes;
 	unsigned long* bin_counts;
 	vector* data;
 }histogram;
+
+/* a modified histogram for parallel usage */
+typedef struct{
+	histogram* graph;
+	unsigned long* loc_bin_counts;
+	unsigned long thread_id;
+	unsigned long divisor;
+	bool is_edge;
+}p_histogram;
 
 /*	FUNCTIONS	======================================================*/
 
@@ -28,6 +41,11 @@ typedef struct{
  * Deletes the given histogram
  */
 void delete_histogram(histogram* gram);
+
+/**
+ * Deletes the given p_histogram
+ */
+void delete_p_histogram(p_histogram* p_graph);
 
 /**
  * finds the bin index where the given data belongs
@@ -44,10 +62,26 @@ unsigned long find_bin(double data, histogram* graph);
 histogram* init_histogram(unsigned long size);
 
 /**
+ * Creates a p_histogram struct with the given histogram and thread_id
+ * Assumes histogram data has already been initalized
+ */
+p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id);
+
+/**
  * Prints the bin_counts
  * Assumes the graph exists
  */
 void print_bins(histogram* graph);
+
+/**
+ * counts the data in graph according to bin in parallel
+ * Assumes bin_maxes and min and max stuff has already been done
+ * 
+ * USES RETURN CODE
+ * @returns SUCCESS if successful
+ * 	ERROR if anything screwedup
+ */
+int process_data_parallel(histogram* graph);
 
 /**
  * counts the data in graph according to bin seriall.

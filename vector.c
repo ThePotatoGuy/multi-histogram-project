@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "vector.h"
+#include "config.h"
 
 #define INPUT_BUFFER_SIZE 100
 
@@ -77,6 +78,8 @@ void delete_vector(vector* vec){
 
 vector* init_vector(unsigned long size){
 	vector* vec;
+	
+	printf(VEC_MSG,size);
 	
 	vec = malloc(sizeof(vec));
 	vec->array = malloc(size*sizeof(double));

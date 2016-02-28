@@ -1,10 +1,13 @@
 /**
  * @author Andre Allan Ponce
  * andreponce@null.net
+ * 
+ * Contains both a serial bin counter and parallel bin counter
  */
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <pthread.h> /* for parallel output */
 #include "vector.h"
 #include "histogram.h"
 #include "config.h"
@@ -46,6 +49,7 @@ static int find_min_max(histogram* graph);
 /*	FUNCTIONS	======================================================*/
 
 static unsigned long binary_find_bin(double data, double* bin_maxes, unsigned long start, unsigned long end){
+	
 	if(end-start > 0){
 		unsigned long pivot = (start+end)/2;
 		if(bin_maxes[pivot-1] <= data && data < bin_maxes[pivot]){
@@ -56,11 +60,14 @@ static unsigned long binary_find_bin(double data, double* bin_maxes, unsigned lo
 			return binary_find_bin(data, bin_maxes, pivot, end);
 		}
 	}
+	printf("test\n");
 	return start;
 }
 
 static void calculate_bin_maxes(histogram* graph){
 	unsigned long t;
+	
+	printf(H_BM_MSG);
 	
 	for(t=0; t < graph->bin_count; t++){
 		graph->bin_maxes[t] = graph->min + graph->bin_width * (t+1);
@@ -89,6 +96,20 @@ void delete_histogram(histogram* gram){
 	}
 }
 
+void delete_p_histogram(p_histogram* p_graph){
+	if(p_graph){
+		if(p_graph->graph){
+			delete_histogram(p_graph->graph);
+		}
+		
+		if(p_graph->loc_bin_counts){
+			free(p_graph->loc_bin_counts);
+		}
+		
+		free(p_graph);
+	}
+}
+
 unsigned long find_bin(double data, histogram* graph){
 	unsigned long t;
 	
@@ -99,6 +120,10 @@ unsigned long find_bin(double data, histogram* graph){
 	/* Check if the value is in the first bin */
 	if(graph->min <= data && data < graph->bin_maxes[0]){
 		return 0;
+	}
+	
+	if(data == graph->max){
+		return (graph->bin_count)-1;
 	}
 	
 	return binary_find_bin(data, graph->bin_maxes, 1, graph->bin_count);
@@ -117,6 +142,8 @@ unsigned long find_bin(double data, histogram* graph){
 static int find_min_max(histogram* graph){
 	double min, max;
 	unsigned long t;
+	
+	printf(H_MM_MSG);
 	
 	if(!graph->data){
 		return ERROR;
@@ -138,8 +165,12 @@ static int find_min_max(histogram* graph){
 		}
 	}
 	
-	graph->min = (unsigned long)min;
-	graph->max = (unsigned long)(max+1);
+	/*graph->min = (unsigned long)min;
+	graph->max = (unsigned long)(max+1);*/
+	graph->min = min;
+	graph->max = max;
+	
+	/*printf("%lf %lf\n",graph->min, graph->max);*/
 	return SUCCESS;
 }
 
@@ -163,18 +194,42 @@ histogram* init_histogram(unsigned long size){
 	return graph;
 }
 
+p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id){
+	p_histogram* p_graph;
+	unsigned long t;
+	
+	p_graph = malloc(sizeof(p_histogram));
+	p_graph->loc_bin_counts = malloc(graph->bin_count*sizeof(unsigned long));
+	p_graph->graph = graph;
+	p_graph->thread_id = thread_id;
+	p_graph->divisor = 0;
+	p_graph->is_edge = false;
+	
+	for(t=0; t < graph->bin_count; t++){
+		p_graph->loc_bin_counts[t] = 0;
+	}
+	
+	return p_graph;
+}
+
 void print_bins(histogram* graph){
 	unsigned long t;
 	
-	printf(BINS_MESSAGE,BINS_MESSAGE_2);
+	printf(BINS_MESSAGE,BINS_MSG_BIN,BINS_MSG_COT,BINS_MSG_MAX);
 	
 	for(t=0; t < graph->bin_count; t++){
-		printf("%9lu | %9lu\n",t,graph->bin_counts[t]);
+		printf("%9lu | %9lu | %9lf\n",t,graph->bin_counts[t],graph->bin_maxes[t]);
 	}
+}
+
+int process_data_parallel(histogram* graph){
+	
 }
 
 void process_data_serial(histogram* graph){
 	unsigned long t, bin;
+	
+	printf(H_BD_MSG);
 	
 	for(t=0; t < graph->data->size; t++){
 		bin = find_bin(graph->data->array[t], graph);

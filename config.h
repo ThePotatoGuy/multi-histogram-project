@@ -14,8 +14,17 @@
 #define HELP_FLAG "-h"
 
 #define HELP_MESSAGE "usage: histo_program.out [-h] [-R N B] [FILENAME B]\n\nApply histogram data sorting to given (or random) data\n\nOptional arguments:\n -h \t\t show this help message and exit\n -R N B\t\t Randomly generate data of size N and apply the histogram data sorting to the data using bin size B.\n\t\t(CANNOT be used with [FILENAME B])\n FILENAME B\t load data to sort from a file using bin size B. (CANNOT be used with [-R N B]\n"
-#define BINS_MESSAGE "Bin number|%10s\n"
-#define BINS_MESSAGE_2 "Count"
+
+#define VEC_MSG "Creating vector of size %lu...\n"
+
+#define H_MM_MSG "Finding min and max values...\n"
+#define H_BM_MSG "Calculting upper bounds for bins...\n"
+#define H_BD_MSG "Binning data...\n"
+
+#define BINS_MESSAGE "%10s|%10s|%10s\n"
+#define BINS_MSG_BIN "Bin number"
+#define BINS_MSG_COT "Count"
+#define BINS_MSG_MAX "Upper bound"
 
 #define BAD_ARGS_MESSAGE "Missing number arguments to %s\n"
 #define BAD_ARG_MESSAGE "Missing number argument N to %s\n"
