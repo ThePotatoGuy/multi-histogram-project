@@ -41,9 +41,10 @@ int main(int argc, char* argv[]){
 	unsigned long size, bins_size, thread_count;
 	int rc, index;
 	histogram* graph;
-	bool para_mode, rand_mode, file_mode;
+	bool para_mode, rand_mode, file_mode, verb_mode;
 	FILE* file;
 	
+	/* We need at least 1 argument */
 	if(argc < 2){
 		printf(HELP_MESSAGE);
 		return ERROR;
@@ -51,9 +52,18 @@ int main(int argc, char* argv[]){
 	
 	index = 1;
 	
+	/* first argument is help flag */
 	if(strcmp(argv[index],HELP_FLAG)==0){
 		printf(HELP_MESSAGE);
 		return SUCCESS;
+	}
+	
+	/* first argument is verb flag */
+	if(strcmp(argv[index],VERB_FLAG)==0){
+		verb_mode = true;
+		index += 1;
+	}else{
+		verb_mode = false;
 	}
 	
 	para_mode = false;
@@ -61,20 +71,30 @@ int main(int argc, char* argv[]){
 	file_mode = false;
 	graph = NULL;
 	
+	/* parse all arguments */
 	while(index < argc){
+		
+		/* once we parse parallel flag and (file flag or random flag),
+		 * we dont need to do anymore argument parsing 
+		 */
 		if((para_mode && file_mode) || (para_mode && rand_mode)){
 			index = argc+1;
 		}
 		
+		/* we found parallel flag */
 		else if(strcmp(argv[index],PARA_FLAG)==0 && !para_mode){
+			
+			/* parallel flag requires at least 1 following argument */
 			if(argc-index < 1){
 				printf(BAD_ARGS_MESSAGE,PARA_FLAG);
 				return ERROR;
 			}else{
 				index += 1;
 				
+				/* next argument is thread count */
 				rc = sscanf(argv[index],"%lu",&thread_count);
 				
+				/* we didnt find a number */
 				if(rc < 1){
 					printf(BAD_NUM_MESSAGE,PARA_FLAG);
 					return ERROR;
@@ -82,19 +102,30 @@ int main(int argc, char* argv[]){
 					index += 1;
 				}
 				
+				/* thread_count cannot be less than 2 */
+				if(thread_count < 2){
+					printf(ERROR_SINGLE_THREAD);
+					return ERROR;
+				}
+				
 				para_mode = true;
 			}
 		}
 		
+		/* we found randomg flag */
 		else if(strcmp(argv[index],RAND_FLAG)==0 && !rand_mode){
+			
+			/* random flag requires at least 2 following arugments */
 			if(argc-index < 2){
 				printf(BAD_ARGS_MESSAGE,RAND_FLAG);
 				return ERROR;
 			}else{
 				index += 1;
 				
+				/* next argument is size */
 				rc = sscanf(argv[index],"%lu",&size);
 				
+				/* we didnt find a number */
 				if(rc < 1){
 					printf(BAD_NUM_MESSAGE,RAND_FLAG);
 					return ERROR;
@@ -102,8 +133,10 @@ int main(int argc, char* argv[]){
 					index +=1;
 				}
 				
+				/* next argument is number of bins */
 				rc = sscanf(argv[index],"%lu",&bins_size);
 				
+				/* we didnt find a number */
 				if(rc < 1){
 					printf(BAD_BIN_MESSAGE,RAND_FLAG);
 					return ERROR;
@@ -112,19 +145,26 @@ int main(int argc, char* argv[]){
 				}
 				
 				rand_mode = true;
+				
+				/* create a histogram and randomized data vector */
 				graph = init_histogram(bins_size);
 				graph->data = create_vector_random(size);
 			}	
 		}
 		
+		/* no flags means filename */
 		else if(!file_mode){
+			
+			/* filename requires at least 1 following argument */
 			if(argc-index < 1){
 				printf(BAD_BIN_MESSAGE,argv[index]);
 				return ERROR;
 			}
 			
+			/* open the file */
 			file = fopen(argv[index],READ_ONLY);
 			
+			/* we couldnt find the file */
 			if(!file){
 				printf(ERROR_FILENAME,argv[index]);
 				return ERROR;
@@ -132,8 +172,10 @@ int main(int argc, char* argv[]){
 				index += 1;
 			}
 			
+			/* next argument is number of bins */
 			rc = sscanf(argv[index],"%lu",&bins_size);
 			
+			/* we didnt find a number */
 			if(rc < 1){
 				printf(BAD_NIN_MESSAGE,argv[index-1]);
 				return ERROR;
@@ -142,20 +184,27 @@ int main(int argc, char* argv[]){
 			}
 			
 			file_mode = true;
+			
+			/* create a histogram and read vector data from file */
 			graph = init_histogram(bins_size);
 			graph->data = create_vector_from_file(file);
+			
+			/* close the file */
 			fclose(file);
 		}
 	}
 	
+	/* we need to be in random mode or file mode to run */
 	if(!rand_mode && !file_mode){
 		printf(BAD_ARGS);
 		printf(HELP_MESSAGE);
 		return ERROR;
 	}
 	
+	/* setup the graph's bins */
 	rc = process_stats(graph);
 	
+	/* we had problems setting the graph's bins */
 	if(rc < 0){
 		printf(ERROR_UNKNOWN);
 		return ERROR;
@@ -164,19 +213,24 @@ int main(int argc, char* argv[]){
 		return ERROR;
 	}
 	
+	/* parallization mode */
 	if(para_mode){
+		
+		/* We cant have more threads than amount of data */
 		if(thread_count > graph->data->size){
 			printf(ERROR_TOO_MANY_THREADS,thread_count,graph->data->size);
 			return ERROR;
 		}
-		process_data_parallel(graph,thread_count);
+		
+		process_data_parallel(graph,thread_count,verb_mode);
 	}else{
 		process_data_serial(graph);
 	}
 	
+	/* print results */
 	print_bins(graph);
 	
-	//delete_histogram(graph);
+	/*delete_histogram(graph);*/
 	
 	return SUCCESS;
 }

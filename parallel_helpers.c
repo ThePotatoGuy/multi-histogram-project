@@ -21,11 +21,14 @@ unsigned long calculate_start_index(unsigned long thread_id, unsigned long threa
 int calculate_thread_spawn_size(unsigned long divisor, unsigned long thread_id, unsigned long  thread_count){
 	int log_bse;
 	
+	/* dont make anymore threads */
 	if(thread_id >= thread_count){
 		return 0;
 	}
 	else{
 		log_bse = find_smallest_expo_of_two(divisor);
+		
+		/* fixes issues with odd/non-power-of-two numbers of threads */
 		if(thread_count - log_bse <= thread_id){
 			log_bse = thread_count - thread_id-1;
 		}

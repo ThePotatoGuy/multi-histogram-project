@@ -14,7 +14,7 @@ When loading from file, please use the following format for the file:
 
 # USAGE:
 ```
-histo_program.out [-h] [-p N] (-R N B or FILENAME B)
+histo_program.out [-h] [-v] [-p N] (-R N B or FILENAME B)
 
 Required arguments:
 -R N B		Randomly generate data of size N and apply the histogram 
@@ -27,4 +27,6 @@ Optional arguments:
 -h			Display help message and exit
 -p N		Use parallel binning process with N number of threads
 			(Default mode is serial)
+-v			Be verbose (must be first flag to activate)
+			(only affects parallel mode)
 ```

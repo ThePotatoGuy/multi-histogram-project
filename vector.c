@@ -24,27 +24,41 @@ vector* create_vector_from_file(FILE* file){
 	unsigned long size,index;
 	double num;
 	
+	/* first line of the file should be size */
 	fgets(buffer,INPUT_BUFFER_SIZE,file);
 	rc = sscanf(buffer,"%u",&size);
 	
+	/* no size is bad */
 	if(rc < 1){
 		return NULL;
 	}
 	
+	/* initalize the vector */
 	vec = init_vector(size);
 	index = 0;
+	
+	/* if the file has more lines than the given size, stop reading*/
 	no_overflow = true;
 	
 	while( fgets(buffer,INPUT_BUFFER_SIZE,file) != NULL && no_overflow){
+		
+		/* read a number */
 		rc = sscanf(buffer,"%lf",&num);
 		
+		/* no number means get out of here */
 		if(rc < 1){
+			
+			/* free the vector */
 			delete_vector(vec);
 			return NULL;
 		}else{
+			
+			/* file should not have more lines than the given size */
 			if(index < size){
 				vec->array[index++] = num;
 			}else{
+				
+				/* file has more lines than the given size */
 				no_overflow = false;
 			}
 		}
@@ -58,9 +72,12 @@ vector* create_vector_random(unsigned long size){
 	
 	vec = init_vector(size);
 	
+	/* set the seed */
 	srand(time(NULL));
 	
 	for(t=0; t < size; t++){
+		
+		/* gets random doubles from 0 to 10 */
 		vec->array[t] = ((double)rand()/(double)RAND_MAX) *10;
 	}
 	

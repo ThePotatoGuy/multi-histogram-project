@@ -20,8 +20,8 @@
 /*	TYPES	==========================================================*/
 
 typedef struct{
-	unsigned long size;
-	double* array;
+	unsigned long size; /* length of the held array */
+	double* array; /* the array of data */
 }vector;
 
 /*	FUNCTIONS	======================================================*/
@@ -52,7 +52,5 @@ void delete_vector(vector* vec);
  * @returns a vector pointer to a vector with the given size
  */
 vector* init_vector(unsigned long size);
-
-
 
 #endif

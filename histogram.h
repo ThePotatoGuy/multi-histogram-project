@@ -2,7 +2,18 @@
  * @author Andre Allan Ponce
  * andreponce@null.net
  * 
- * Histogram creates bin_data structs that holds 
+ * Histogram functions sort/bin data in a histogram.
+ * Each histogram also contains the data it binned
+ * 
+ * p_histograms are histogram wrappers that include extra information
+ * for parallelization 
+ * 
+ * is_edge property:
+ * With odd/non-power-of-two numbers of threads, the functions used
+ * to calculate number of threads to spawn for tree sum do not work
+ * completely as expected. This is circumvented through the is_edge
+ * property, which calculates the divisor in a different way during
+ * the tree sum process.
  */
  
 #ifndef HISTOGRAM_H
@@ -15,25 +26,25 @@
 
 /* Basic histogram */
 typedef struct{
-	unsigned long bin_count;
+	unsigned long bin_count; /* number of bins */
 	/*unsigned long min;
 	unsigned long max;*/
-	double min;
-	double max;
-	double bin_width;
-	double* bin_maxes;
-	unsigned long* bin_counts;
-	vector* data;
+	double min; /* the min value in the data */
+	double max; /* the max value in the data */
+	double bin_width; /* the width of a bin */
+	double* bin_maxes; /* array of the upper bounds of bins */
+	unsigned long* bin_counts; /* array of the number of data in each bin */
+	vector* data; /* The data that is/will be binned */
 }histogram;
 
 /* a modified histogram for parallel usage */
 typedef struct{
-	histogram* graph;
-	unsigned long* loc_bin_counts;
-	unsigned long thread_id;
+	histogram* graph; /* the histogram (should be shared by all threads) */
+	unsigned long* loc_bin_counts; /* local bin counts for this thread */
+	unsigned long thread_id; 
 	unsigned long thread_count;
-	unsigned long divisor;
-	bool is_edge;
+	unsigned long divisor; /* divisor, used for tree sum */
+	bool is_edge; /* edge threads have special spawn properties, refer to top */
 }p_histogram;
 
 /*	FUNCTIONS	======================================================*/
@@ -97,7 +108,7 @@ void print_bins(histogram* graph);
  * 
  * @returns return codes from p_thread (messages will have already been printed out)
  */
-int process_data_parallel(histogram* graph, unsigned long thread_count);
+int process_data_parallel(histogram* graph, unsigned long thread_count, bool verb_mode);
 
 /**
  * counts the data in graph according to bin seriall.
