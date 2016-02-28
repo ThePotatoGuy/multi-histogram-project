@@ -8,6 +8,8 @@
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
 
+#include "vector.h"
+
 /*	TYPES	==========================================================*/
 
 typedef struct{

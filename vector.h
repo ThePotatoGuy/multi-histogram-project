@@ -3,6 +3,13 @@
  * andreponce@null.net
  * 
  * Vector array that holds the array of data (+ length)
+ * 
+ * For reading a file, the following format is used:
+ * <number of datas (n)>
+ * <data 1>
+ * <data 2>
+ * ...
+ * <data n>
  */
 
 #ifndef VECTOR_H
@@ -24,6 +31,8 @@ typedef struct{
  * Assumes that the given file pointer is not NULL
  * If the given input file contains more data the specified 
  * size in the data file, the extra data is ignored.
+ * 
+ * Check top of file for format for file
  * 
  * @returns NULL if the given file or is bad format
  */

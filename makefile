@@ -9,7 +9,7 @@ CC=gcc
 CFLAGS=-c -Wall -std=c99 -Wextra -O1 -g
 
 # All of the .h header files to use as dependencies
-HEADERS=vector.h histogram.h return_code.h
+HEADERS=vector.h histogram.h return_code.h config.h
 
 # All of the object files to produce as intermediary work
 OBJECTS=main.o vector.c histogram.c
