@@ -26,7 +26,15 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=-1
+current_page=6
+FILE_NAME_0=579;Make;0;EUTF-8;1;1;1;%2Fhome%2Fpotato%2FgitDirect%2Fmulti-histogram-project%2Fmakefile;0;4
+FILE_NAME_1=0;C;0;EUTF-8;1;1;1;%2Fhome%2Fpotato%2FgitDirect%2Fmulti-histogram-project%2Fmain.c;0;4
+FILE_NAME_2=1162;C;0;EUTF-8;1;1;1;%2Fhome%2Fpotato%2FgitDirect%2Fmulti-histogram-project%2Fvector.c;0;4
+FILE_NAME_3=777;C;0;EUTF-8;1;1;1;%2Fhome%2Fpotato%2FgitDirect%2Fmulti-histogram-project%2Fvector.h;0;4
+FILE_NAME_4=83;None;0;EUTF-8;1;1;1;%2Fhome%2Fpotato%2FgitDirect%2Fmulti-histogram-project%2Fsample_data;0;4
+FILE_NAME_5=282;C;0;EUTF-8;1;1;1;%2Fhome%2Fpotato%2FgitDirect%2Fmulti-histogram-project%2Fhistogram.h;0;4
+FILE_NAME_6=3515;C;0;EUTF-8;1;1;1;%2Fhome%2Fpotato%2FgitDirect%2Fmulti-histogram-project%2Fhistogram.c;0;4
+FILE_NAME_7=418;C;0;EUTF-8;1;1;1;%2Fhome%2Fpotato%2FgitDirect%2Fmulti-histogram-project%2Freturn_code.h;0;4
 
 [VTE]
 last_dir=/home/potato

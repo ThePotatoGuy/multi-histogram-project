@@ -42,6 +42,12 @@ unsigned long find_bin(double data, histogram* graph);
 histogram* init_histogram(unsigned long size);
 
 /**
+ * counts the data in graph according to bin seriall.
+ * Assumes bin_maxes and min and max stuff has already been done
+ */
+void process_data_serial(histogram* graph);
+
+/**
  * Proceess the min, max, bin_width, and bin_maxes of the given graph
  * 
  * USES RETURN_CODE

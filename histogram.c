@@ -4,6 +4,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "vector.h"
 #include "histogram.h"
 #include "return_code.h"
@@ -69,6 +70,24 @@ static void calculate_bin_width(histogram* graph){
 	graph->bin_width = (graph->max - graph->min)/graph->bin_count;
 }
 
+void delete_histogram(histogram* gram){
+	if(gram){
+		if(gram->bin_maxes){
+			free(gram->bin_maxes);
+		}
+		
+		if(gram->bin_counts){
+			free(gram->bin_counts);
+		}
+		
+		if(gram->data){
+			delete_vector(gram->data);
+		}
+		
+		free(gram);
+	}
+}
+
 unsigned long find_bin(double data, histogram* graph){
 	unsigned long t;
 	
@@ -92,59 +111,6 @@ unsigned long find_bin(double data, histogram* graph){
 	}
 	
 	return graph->bin_count;*/
-}
-
-void delete_histogram(histogram* gram){
-	if(gram){
-		if(gram->bin_maxes){
-			free(gram->bin_maxes);
-		}
-		
-		if(gram->bin_counts){
-			free(gram->bin_counts);
-		}
-		
-		if(gram->data){
-			delete_vector(gram->data);
-		}
-		
-		free(gram);
-	}
-}
-
-histogram* init_histogram(unsigned long size){
-	histogram* graph;
-	unsigned long t;
-	
-	graph = malloc(sizeof(histogram));
-	graph->bin_maxes = malloc(size*sizeof(double));
-	graph->bin_counts = malloc(size*sizeof(unsigned long));
-	graph->bin_count = size;
-	graph->min = 0;
-	graph->max = 0;
-	graph->bin_width = 0;
-	
-	for(t=0; t < size; t++){
-		graph->bin_maxes = 0;
-		graph->bin_counts = 0;
-	}
-	
-	return graph;
-}
-
-int process_stats(histogram* graph){
-	int rc;
-	
-	rc = find_min_max(graph);
-	
-	if(rc){
-		return rc;
-	}
-	
-	calculate_bin_width(graph);
-	calculate_bin_maxes(graph);
-	
-	return SUCCESS;
 }
 
 static int find_min_max(histogram* graph){
@@ -173,5 +139,54 @@ static int find_min_max(histogram* graph){
 	
 	graph->min = min;
 	graph->max = max;
+	return SUCCESS;
+}
+
+histogram* init_histogram(unsigned long size){
+	histogram* graph;
+	unsigned long t;
+	
+	graph = malloc(sizeof(histogram));
+	graph->bin_maxes = malloc(size*sizeof(double));
+	graph->bin_counts = malloc(size*sizeof(unsigned long));
+	graph->bin_count = size;
+	graph->min = 0;
+	graph->max = 0;
+	graph->bin_width = 0;
+	
+	for(t=0; t < size; t++){
+		graph->bin_maxes = 0;
+		graph->bin_counts = 0;
+	}
+	
+	return graph;
+}
+
+void process_data_serial(histogram* graph){
+	unsigned long t, bin;
+	
+	for(t=0; t < graph->data->size; t++){
+		bin = find_bin(graph->data->array[t], graph);
+		
+		if(bin == graph->bin_count){
+			printf("Bad data at index %u\n", bin);
+		}else{
+			graph->bin_counts[bin] += 1;
+		}
+	}
+}
+
+int process_stats(histogram* graph){
+	int rc;
+	
+	rc = find_min_max(graph);
+	
+	if(rc){
+		return rc;
+	}
+	
+	calculate_bin_width(graph);
+	calculate_bin_maxes(graph);
+	
 	return SUCCESS;
 }
