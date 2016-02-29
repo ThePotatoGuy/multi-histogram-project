@@ -199,10 +199,11 @@ void* bin_data(void* data){
 	if(spawn_size > 0){
 		delete_p_histogram_list(p_graphs, index);
 		free(threads);
+		/*free(status);*/
 	}
 	
 	/* exit thread */
-	pthread_exit(NULL);
+	/*pthread_exit(NULL);*/
 }
 
 void bin_data_values(p_histogram* p_graph){

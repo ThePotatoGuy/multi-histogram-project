@@ -89,7 +89,7 @@ void delete_vector(vector* vec){
 		if(vec->array){
 			free(vec->array);
 		}
-		free(vec->array);
+		free(vec);
 	}
 }
 
@@ -98,7 +98,7 @@ vector* init_vector(unsigned long size){
 	
 	printf(VEC_MSG,size);
 	
-	vec = malloc(sizeof(vec));
+	vec = malloc(sizeof(vector));
 	vec->array = malloc(size*sizeof(double));
 	vec->size = size;
 	

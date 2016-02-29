@@ -230,7 +230,8 @@ int main(int argc, char* argv[]){
 	/* print results */
 	print_bins(graph);
 	
-	/*delete_histogram(graph);*/
+	delete_histogram(graph);
+	/*delete_vector(graph->data);*/
 	
 	return SUCCESS;
 }
