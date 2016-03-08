@@ -18,8 +18,8 @@ unsigned long calculate_start_index(unsigned long thread_id, unsigned long threa
 	return (thread_id * size)  / thread_count ;
 }
 
-int calculate_thread_spawn_size(unsigned long divisor, unsigned long thread_id, unsigned long  thread_count){
-	int log_bse;
+unsigned int calculate_thread_spawn_size(unsigned long divisor, unsigned long thread_id, unsigned long  thread_count){
+	unsigned int log_bse;
 	
 	/* dont make anymore threads */
 	if(thread_id >= thread_count){

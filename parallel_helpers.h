@@ -26,7 +26,7 @@ unsigned long calculate_start_index(unsigned long thread_id, unsigned long threa
  * 
  * @returns the number of threads the given thread needs to spawn
  */
-int calculate_thread_spawn_size(unsigned long divisor, unsigned long thread_id, unsigned long thread_count);
+unsigned int calculate_thread_spawn_size(unsigned long divisor, unsigned long thread_id, unsigned long thread_count);
 
 /**
  * @returns the nearest power of two to the given value

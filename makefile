@@ -15,7 +15,7 @@ CLINKFLAGS =-lpthread -lm
 HEADERS=vector.h histogram.h parallel_helpers.h return_code.h config.h
 
 # All of the object files to produce as intermediary work
-OBJECTS=main.o vector.c histogram.c parallel_helpers.c
+OBJECTS=main.o vector.o histogram.o parallel_helpers.o
 
 # The final program to build
 EXECUTABLE=histo_program.out

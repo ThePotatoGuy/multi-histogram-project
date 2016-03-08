@@ -69,7 +69,7 @@ static int find_min_max(histogram* graph);
 /**
  * Debug method lets us see the bin_cts of a p_graph
  */
-static void print_bin_cts(p_histogram* p_graph);
+/*static void print_bin_cts(p_histogram* p_graph);*/
 
 /**
  * Transfers the bin counts from p_graph to the graph
@@ -106,7 +106,8 @@ void* bin_data(void* data){
 	pthread_t* threads;
 	void* status;
 	unsigned long divisor,t,index;
-	int rc, spawn_size, i;
+	unsigned int spawn_size;
+	int rc, i;
 	
 	p_graph = (p_histogram*) data;
 	
@@ -201,7 +202,7 @@ void* bin_data(void* data){
 		free(threads);
 		/*free(status);*/
 	}
-	
+	return NULL;
 	/* exit thread */
 	/*pthread_exit(NULL);*/
 }
@@ -295,7 +296,7 @@ void delete_p_histogram_list(p_histogram** p_graphs, int size){
 }
 
 unsigned long find_bin(double data, histogram* graph){
-	unsigned long t;
+	/*unsigned long t;*/
 	
 	/* if the data is less than min or greater than max, throw it out */
 	if(data < graph->min || data > graph->max){
@@ -409,7 +410,7 @@ p_histogram* init_p_histogram(histogram* graph, unsigned long thread_id, unsigne
 	return p_graph;
 }
 
-/* Debug method only */
+/* Debug method only 
 static void print_bin_cts(p_histogram* p_graph){
 	unsigned long t;
 	
@@ -420,7 +421,7 @@ static void print_bin_cts(p_histogram* p_graph){
 	}
 	
 	printf("\n");
-}
+}*/
 
 void print_bins(histogram* graph){
 	unsigned long t;
@@ -531,7 +532,7 @@ void process_data_serial(histogram* graph){
 		
 		/* this part really wont happen ever */
 		if(bin == graph->bin_count){
-			printf("Bad data at index %u\n", bin);
+			printf("Bad data at index %lu\n", bin);
 		}else{
 			graph->bin_counts[bin] += 1;
 		}

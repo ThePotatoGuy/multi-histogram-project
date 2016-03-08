@@ -26,7 +26,7 @@ vector* create_vector_from_file(FILE* file){
 	
 	/* first line of the file should be size */
 	fgets(buffer,INPUT_BUFFER_SIZE,file);
-	rc = sscanf(buffer,"%u",&size);
+	rc = sscanf(buffer,"%lu",&size);
 	
 	/* no size is bad */
 	if(rc < 1){
